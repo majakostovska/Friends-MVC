@@ -1,0 +1,76 @@
+﻿@model IEnumerable<ITlab3.Models.FriendModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table id="friendsmodelTable" class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.mestonaziveenje)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.mestonaziveenje)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.indeks }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.indeks }) |
+                    <button data-friends-id="@item.indeks" class="btn-link js-delete">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            var table = $("#friendsmodelTable").DataTable();
+            $("#friendsmodelTable .js-delete").on("click", function () {
+                var button = $(this);
+                bootbox.confirm("Delete this friend?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: "/FriendModels/Delete/" + button.attr("data-friends-id"),
+                            method: "GET",
+                            success: function () {
+                                table.row(button.parents("tr")).remove().draw();
+                            },
+                            error: function (err) {
+                                console.log(err);
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}
